@@ -80,37 +80,46 @@ export default function handler(req, res) {
 
         livrosParaEmprestar.push(livroEncontrado);
 
-        // console.log("Regras de negócio aprovadas!", livrosParaEmprestar)
-
-        for (const livro of livrosParaEmprestar) {
-            livro.qtdEmprestados += 1;
-        }
-
-        const novoEmprestimo: Emprestimo = {
-            id: uuidv4(),
-            usuarioId: usuarioId,
-            livrosIds: livrosIds,
-            dataEmprestimo: dataEmprestimo,
-            status: "ativo"
-        };
-
-        emprestimos.push(novoEmprestimo);
-
-        const dadosAtualizados: Database = {
-            ...parsed,        
-            livros,          
-            emprestimos      
-        };
-
-        fs.writeFileSync(filePath, JSON.stringify(dadosAtualizados, null, 2), 'utf-8');
-
- 
-        return res.status(200).json({
-            mensagem: 'Empréstimo realizado com sucesso!',
-            emprestimo: novoEmprestimo
-        });
-
     }
+
+
+
+    // console.log("Regras de negócio aprovadas!", livrosParaEmprestar)
+
+    for (const livro of livrosParaEmprestar) {
+        livro.qtdEmprestados += 1;
+    }
+
+    const novoEmprestimo: Emprestimo = {
+        id: uuidv4(),
+        usuarioId: usuarioId,
+        livrosIds: livrosIds,
+        dataEmprestimo: dataEmprestimo,
+        status: "ativo"
+    };
+
+    emprestimos.push(novoEmprestimo);
+
+    const dadosAtualizados: Database = {
+        ...parsed,
+        livros,
+        emprestimos
+    };
+
+    fs.writeFileSync(filePath, JSON.stringify(dadosAtualizados, null, 2), 'utf-8');
+
+
+    return res.status(200).json({
+        mensagem: 'Empréstimo realizado com sucesso!',
+        emprestimo: novoEmprestimo
+    });
+
+
+
+
+
+
+
     // return res.status(200).json({ mensagem: 'Leitura do banco feita com sucesso!' });
 }
 
