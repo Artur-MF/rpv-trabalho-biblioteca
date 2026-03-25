@@ -21,14 +21,26 @@ export default function handler(req, res) {
 
     const { titulo, autor, genero, quantidade } = req.body;
 
-    if (!titulo || !autor || !genero || !quantidade) {
-        return res.status(400).json({ mensagem: 'Todos os campos (titulo, autor, genero, quantidade) são obrigatórios.' });
+    const tituloLimpo = titulo?.trim();
+    const autorLimpo = autor?.trim();
+    const generoLimpo = genero?.trim();
+    const quantidadeNumero = Number(quantidade);
+
+    if (!tituloLimpo || !autorLimpo || !generoLimpo || quantidade === undefined || quantidade === null) {
+        return res.status(400).json({
+            mensagem: 'Todos os campos (titulo, autor, genero, quantidade) são obrigatórios.'
+        });
     }
 
+    if (!Number.isInteger(quantidadeNumero) || quantidadeNumero <= 0) {
+        return res.status(400).json({
+            mensagem: 'A quantidade deve ser um número inteiro positivo.'
+        });
+    }
     const jaExiste = livros.some(
         (livro: Livro) =>
-            livro.titulo.trim().toLowerCase() === titulo.trim().toLowerCase() &&
-            livro.autor.trim().toLowerCase() === autor.trim().toLowerCase()
+            livro.titulo.trim().toLowerCase() === tituloLimpo.toLowerCase() &&
+            livro.autor.trim().toLowerCase() === autorLimpo.toLowerCase()
     );
 
     if (jaExiste) {
@@ -37,10 +49,10 @@ export default function handler(req, res) {
 
     const novoLivro = {
         id: uuidv4(),
-        titulo: titulo.trim(),
-        autor: autor.trim(),
-        genero: genero.trim(),
-        quantidade: Number(quantidade),
+        titulo: tituloLimpo,
+        autor: autorLimpo,
+        genero: generoLimpo,
+        quantidade: quantidadeNumero,
         qtdEmprestados: 0
     };
 

@@ -12,20 +12,28 @@ export default function handler(req, res) {
 
     const { nome, email, telefone } = req.body
 
-    if (!nome || !email || !telefone) {
+    if (!nome.trim().toLowerCase() || !email.trim().toLowerCase() || !telefone.trim()) {
         return res.status(400).json({ mensagem: 'Nome, email e telefone são obrigatórios.' });
     }
 
     // verificar se o email já existe
-    if (usuarios.some((user) => user.email === email)) {
-        return res.status(400).json({ mensagem: 'Usuário já cadastrado com este e-mail!' });
+
+    const emailExiste = usuarios.some((user) =>
+        user.email.trim().toLowerCase() === email.trim().toLowerCase()
+    );
+
+    if (emailExiste) {
+        return res.status(400).json({
+            mensagem: 'Usuário já cadastrado com este e-mail!'
+        });
     }
+
 
     const novoUsuario = {
         id: uuidv4(),
-        nome,
-        email,
-        telefone
+        nome: nome.toLowerCase().trim(),
+        email: email.toLowerCase().trim(),
+        telefone: telefone.trim(),
     };
 
     usuarios.push(novoUsuario);
